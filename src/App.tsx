@@ -458,6 +458,38 @@ export default function App() {
     return anomalies.slice(0, 10) // Limit to top 10 anomalies
   }
 
+  const generateDummyData = (): Transaction[] => {
+    const dummyData: Transaction[] = [
+      { id: 'T001', date: '2024-01-15', description: 'Grocery Store Purchase', amount: 124.56, account: 'Checking-1234', category: 'Groceries', merchant: 'WholeFoods' },
+      { id: 'T002', date: '2024-01-15T10:30:00', description: 'Coffee Shop Purchase', amount: 8.95, account: 'Checking-1234', category: 'Dining', merchant: 'Starbucks' },
+      { id: 'T003', date: '2024-01-16', description: 'Gas Station Purchase', amount: 67.89, account: 'Checking-1234', category: 'Transportation', merchant: 'Shell' },
+      { id: 'T004', date: '2024-01-16T15:00:00', description: 'Restaurant Purchase', amount: 1250.0, account: 'Checking-1234', category: 'Dining', merchant: 'FineDining' },
+      { id: 'T005', date: '2024-01-17', description: 'Utility Payment', amount: 185.43, account: 'Checking-1234', category: 'Utilities', merchant: 'ElectricCo' },
+      { id: 'T006', date: '2024-01-17T21:30:00', description: 'Online Purchase', amount: 1500.0, account: 'Checking-1234', category: 'Shopping', merchant: 'Amazon' },
+      { id: 'T007', date: '2024-01-18', description: 'ATM Withdrawal', amount: 300.0, account: 'Checking-1234', category: 'Cash', merchant: 'ATM' },
+      { id: 'T008', date: '2024-01-18T23:00:00', description: 'Online Gambling', amount: 2000.0, account: 'Checking-1234', category: 'Entertainment', merchant: 'CasinoSite' },
+      { id: 'T009', date: '2024-01-19', description: 'Grocery Store Purchase', amount: 85.32, account: 'Checking-1234', category: 'Groceries', merchant: 'Kroger' },
+      { id: 'T010', date: '2024-01-20', description: 'Coffee Shop Purchase', amount: 6.78, account: 'Checking-1234', category: 'Dining', merchant: 'Dunkin' }
+    ]
+    return dummyData
+  }
+
+  const downloadDummyCSV = () => {
+    const csvHeaders = 'id,date,description,amount,account,category,merchant'
+    const csvData = generateDummyData().map(t => `${t.id},"${t.date}","${t.description}",${t.amount},"${t.account}","${t.category}","${t.merchant}"`).join('\n')
+    const csvContent = `${csvHeaders}\n${csvData}`
+
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'dummy_transactions.csv'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   const processFile = async () => {
     if (!file) return
 
@@ -639,6 +671,13 @@ Timestamp: ${new Date().toISOString()}
                       </div>
                     </div>
                   </label>
+                </div>
+
+                <div className="flex justify-center">
+                  <Button variant="ghost" size="sm" onClick={downloadDummyCSV} className="gap-2">
+                    <Download className="w-4 h-4" />
+                    Download Sample CSV
+                  </Button>
                 </div>
 
                 {error && (
